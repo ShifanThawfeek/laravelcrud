@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use Illuminate\Http\Request;
 
 class ContactController extends Controller
@@ -13,7 +14,9 @@ class ContactController extends Controller
      */
     public function index()
     {
-        //
+        $contacts = Contact::all();
+        // echo '<pre>'; print_r($contacts); echo '</pre>';
+        return view('contacts.index', compact('contacts'));
     }
 
     /**
@@ -23,7 +26,7 @@ class ContactController extends Controller
      */
     public function create()
     {
-        //
+        return view('contacts.create');
     }
 
     /**
@@ -34,7 +37,10 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $createcontact = $request->all();
+        // echo '<pre>'; print_r($createcontact); echo '</pre>';
+        Contact::create($createcontact);
+        return redirect('/contacts');
     }
 
     /**
@@ -45,7 +51,9 @@ class ContactController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('contacts.show', [
+            'contact' => Contact::findOrFail($id)
+        ]);
     }
 
     /**
@@ -56,7 +64,7 @@ class ContactController extends Controller
      */
     public function edit($id)
     {
-        //
+        return 'test edit';
     }
 
     /**
@@ -68,7 +76,11 @@ class ContactController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $contact = Contact::find($id);
+        $contact->name = $request->input('name');
+        $contact->mobilenumber = $request->input('mobilenumber');
+        $contact->update();
+        return redirect('/contacts')->with('status','Successfully updated!');
     }
 
     /**
@@ -79,6 +91,8 @@ class ContactController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $delete_contact = Contact::findOrFail($id);
+        $delete_contact->delete();
+        return redirect('/contacts');
     }
 }
